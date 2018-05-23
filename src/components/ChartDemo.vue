@@ -37,7 +37,7 @@
         },
     }
 </script>
-<style lang="less">
+<style>
 .chart-content{
     height: 100%;
     width: 100%;

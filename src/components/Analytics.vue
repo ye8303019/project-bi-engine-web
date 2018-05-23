@@ -1,15 +1,5 @@
 <template>
-  <div id="app">
-    <el-menu
-      class="el-menu-demo"
-      mode="horizontal"
-      background-color="#545c64"
-      text-color="#fff"
-      font-sixe="16px"
-      active-text-color="#ffd04b">
-      <el-menu-item index="1">INSIGHTS数据分析</el-menu-item>
-
-    </el-menu>
+  <div class="app-container">
     <el-container style="height: 100%; background-color: #f8f8f8">
       <el-aside width="200px" style="margin:10px;">
         <el-card class="box-card" style="height:100%; overflow:hide">
@@ -119,6 +109,7 @@
 import draggable from 'vuedraggable'
 import ChartTypeList from './ChartTypeList.vue'
 import ChartDemo from './ChartDemo.vue'
+import axios from 'axios'
 export default {
   name: 'Analytics',
   props: {
@@ -156,6 +147,15 @@ export default {
     updateChartType(){
 
     }
+  },
+  mounted(){
+    axios.get('/api/user?ID=12345')
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
   }
 }
 </script>
