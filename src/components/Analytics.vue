@@ -8,14 +8,14 @@
           </div>
           <div class="text item data-container">
               <p class="list-title">维度：</p>
-              <draggable v-model="orignDimensions" :options="{group:'Dimensions'}" @start="drag=fase" @end="drag=true" class="aside-drag-container">
+              <draggable v-model="orignDimensions" :options="{group:{name:'Dimensions', pull:'clone', put:false }}" class="aside-drag-container">
                 <div class="list-bar" v-for="element in orignDimensions" :key="element.id">
                   <i class="el-icon-view list-label"></i>
                   {{element}}
                 </div>
               </draggable>
               <p class="list-title list-title-end">度量：</p>
-              <draggable v-model="orignMeasure" :options="{group:'Measure'}" @start="drag=fase" @end="drag=true" class="aside-drag-container">
+              <draggable v-model="orignMeasure" :options="{group:{name:'Measure',pull:'clone', put:false}}" class="aside-drag-container">
                 <div class="list-bar" v-for="element in orignMeasure" :key="element.id">
                   <i class="el-icon-tickets list-label"></i>
                   {{element}}
@@ -33,7 +33,7 @@
                     <i class="el-icon-location-outline"></i>维度：
                   </span>
                   <div class="drag-end-content">
-                    <draggable v-model="draggedRow" :options="{group:'Dimensions'}" @start="drag=fase" @end="drag=true" class="main-header-drag-container">
+                    <draggable v-model="draggedRow" :options="{group:{name:'Dimensions'}}" @end="onEnd(draggedRow,arguments[0])"  class="main-header-drag-container">
                       <span class="drag-end-label" v-for="element in draggedRow" :key="element.id">
                         {{element}}
                       </span>
@@ -47,7 +47,7 @@
                     <i class="el-icon-share"></i>度量：
                   </span>
                   <div class="drag-end-content">
-                    <draggable v-model="draggedCol" :options="{group:'Measure'}" @start="drag=true" @end="drag=true" class="main-header-drag-container">
+                    <draggable v-model="draggedCol" :options="{group:{name:'Measure'}}" @end="onEnd(draggedCol,arguments[0])"  class="main-header-drag-container">
                       <span class="drag-end-label" v-for="element in draggedCol" :key="element.id">
                         {{element}}
                       </span>
@@ -159,6 +159,10 @@ export default {
     ChartDemo,
   },
   methods:{
+    onEnd(d,e){
+      let _index= e.oldIndx
+      d.splice(_index,1)
+  },
     updateChartData() {
       // axios.post('/bi').then((result)=>{
       //   this.chartData = {
@@ -201,8 +205,8 @@ export default {
     //       console.log(error);
     //     });
     setTimeout(()=>{
-      this.orignDimensions = ['b'];
-      this.orignMeasure = ['c','d'];
+      // this.orignDimensions = ['b'];
+      // this.orignMeasure = ['c','d'];
       this.loading = false;
     },1000)
   }
