@@ -8,7 +8,7 @@
       background-color="#545c64"
       text-color="#fff"
       font-sixe="16px"
-      router="true"
+      :router="true"
       active-text-color="#ffd04b">
           <el-menu-item  style="float:right" index="Dashboard">仪表盘</el-menu-item>
           <el-menu-item  style="float:right" index="Analytics">数据分析</el-menu-item>
