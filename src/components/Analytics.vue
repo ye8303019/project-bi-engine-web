@@ -89,7 +89,10 @@
             <el-button style="position: absolute;right: 26px;bottom: 10px;" @click="updateChartData">更新</el-button>
           </el-header>
           <el-main style="height:calc(100% - 170px)">
-            <chart-demo :chart-type="chartType" :chart-prop="chartData" :show-type="'detail'" v-if="chartData"></chart-demo>
+            <div v-if="chartData">
+              <chart-demo :chart-type="chartType" :chart-prop="chartData" :show-type="'detail'"></chart-demo>
+              <el-button @click="saveChart">保存</el-button>
+            </div>
           </el-main>
       </el-main>
       <el-aside width="150px" style="margin:10px;">
@@ -119,24 +122,11 @@ export default {
   data(){
     return {
       activeName: 'first',
-      orignDimensions: [{
-        name:'申请人'
-      },{
-        name:'省份'
-      },{
-        name:'专利分类'
-      },{
-        name:'申请日期'
-      }],
-      orignMeasure: [{
-        name:'专利总数'
-      },{
-        name:'发明专利总数'
-      },{
-        name:'实用新型专利总数'
-      },{
-        name:'诉讼案件'
-      }],
+
+      //data
+      dataCollectId: '',
+      orignDimensions: [],
+      orignMeasure: [],
       draggedRow: [],
       draggedCol: [],
 
@@ -146,10 +136,8 @@ export default {
       //
       loading: false,
 
-      //
+      // chart opts
       chartType: '6',
-
-      //
       chartData: null
     }
   },
@@ -164,51 +152,37 @@ export default {
       d.splice(_index,1)
   },
     updateChartData() {
-      // axios.post('/bi').then((result)=>{
-      //   this.chartData = {
-      //     xxx: ['b'],//维度
-      //     yyy: ['c', 'd'],//度量
-      //     data: {
-      //       b: [1,2,3,4,5,6],
-      //       c: [1,2,3,4,5,6],
-      //       d: [1,2,3,4,5,6]
-      //     }
-      //   }
-      // })
-      this.chartData = {
-        xxx: ['b'],//维度
-        yyy: ['c', 'd'],//度量
-        data: {
-          b: [1,2,3,4,5,6],
-          c: [1,2,3,4,5,6],
-          d: [1,2,3,4,5,6]
-        }
-      }
+      axios.post('/bi/chart/query', {
+        "dataCollectId": this.dataCollectId,
+        "dimensions": this.draggedRow,
+        "measurements": this.draggedCol
+      }).then((result)=>{
+        let data = result.data.data;
+        this.chartData = data;
+      })
     },
-    updateChartType(index){
-      this.chartType = index;
+    updateChartType(chartType){
+      this.chartType = chartType;
+    },
+    saveChart() {
+      axios.post('/bi/chart',
+        {"dataCollectId": this.dataCollectId, "dimensions": this.draggedRow, "measurements":this.draggedCol, "options": JSON.stringify(Object.assign(this.chartData, {chartType:this.chartType}))}
+      ).then((result)=>{
+        this.$router.push({ name: 'Dashboard'})
+      })
     }
   },
   created() {
     this.loading = true;
+    this.dataCollectId = this.$route.query.table_id || 15;
   },
   mounted(){
-    // axios.get('/bi/data/collection/')
-    //     .then((response)=>{
-    //       let data = response.data.data[0];
-    //       this.orignDimensions = ['b'];
-    //       this.orignMeasure = ['c','d'];
-    //       this.loading = false;
-    //       console.log(response);
-    //     })
-    //     .catch(function (error) {
-    //       console.log(error);
-    //     });
-    setTimeout(()=>{
-      this.orignDimensions = ['b'];
-      this.orignMeasure = ['c','d'];
+    axios.get('/bi/data/collection/'+this.dataCollectId).then((result)=>{
+      let data = result.data.data;
+      this.orignDimensions = data.dimensions;
+      this.orignMeasure = data.measurements;
       this.loading = false;
-    },1000)
+    })
   }
 }
 </script>
