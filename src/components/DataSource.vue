@@ -4,7 +4,7 @@
       <el-aside width="250px" style="margin:10px;">
         <el-card class="box-card" style="height:100%; overflow:hide">
           <div slot="header" class="clearfix card-header">
-            <span>我的数据</span>
+            <span>我的数据源</span>
           </div>
           <div class="text data-list">
               <p v-for="(item, index) in dataSourceList" :key="index">{{item.name+'_'+item.id}}</p>
@@ -20,13 +20,13 @@
                 <p style="text-align:left; margin-bottom:10px;">
                     <span> 数据处理SQL：</span>
                 </p>
-                <textarea name="sqlContent" class="sql-content"></textarea>
+                <textarea name="sqlContent" class="sql-content" v-model="dataSql"></textarea>
             </el-row>
           </el-header>
           <el-main style="height:calc(100% - 250px)">
             <table-list :table-data="tableData"></table-list>
-            <el-button class="data-merge-button">合并数据</el-button>
-            <el-button type="success" class="data-save-button">保存去分析</el-button>
+            <el-button class="data-merge-button" @click="getSourceData('',dataSql)">合并数据</el-button>
+            <el-button type="success" class="data-save-button" @click="saveMergeTable">保存去分析</el-button>
           </el-main>
       </el-main>
     </el-container>
@@ -35,7 +35,7 @@
             <el-tab-pane label="API" name="first">
                 <el-form :model="form">
                     <el-form-item label="API地址：" :label-width="formLabelWidth">
-                        <el-input v-model="form.name" auto-complete="off"></el-input>
+                        <el-input v-model="apiUrl" auto-complete="off"></el-input>
                     </el-form-item>
                 </el-form>
             </el-tab-pane>
@@ -58,7 +58,7 @@
         </el-tabs>
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+            <el-button type="primary" @click="saveDataSource">确 定</el-button>
         </div>
     </el-dialog>
   </div>
@@ -85,6 +85,8 @@ export default {
                 name:'专利价值',
                 id:'123'
         }],
+        dataSql:'',
+        apiUrl:'',
         tableData: [{
                     date: '2016-05-02',
                     name: '王小虎',
@@ -101,7 +103,7 @@ export default {
       TableList
   },
   mounted(){
-      getDataSourceList()
+      this.getDataSourceList()
   },
     methods:{
         // 文件上传
@@ -110,8 +112,50 @@ export default {
         },
         // 获取DataSourceList 数据
         getDataSourceList(){
-            axios.get('/api/user?ID=12345').then((response)=>{
+            axios.get('/bi/user', {
+                params: {
+                    ID: 12345
+                }
+            }).then((response)=>{
                 this.dataSourceList=response;
+            })
+        },
+        // 获取合并后table数据
+        getSourceData(id,sql){
+            axios.get('/bi/user',{
+                params: {
+                    ID: 12345,
+                    sql
+                }
+            }).then((response)=>{
+                this.dataSourceList=response;
+            })
+        },
+        // 添加Api地址
+        addApiUrl(url){
+            axios.get('/bi/user',{
+                params: {
+                    url
+                }
+            }).then((response)=>{
+                this.dataSourceList=response;
+                this.getDataSourceList()
+            })
+        },
+        // 保存API数据
+        saveDataSource(){
+            this.dialogFormVisible = false
+            if(this.dialogFormVisible=='first'){
+                this.addApiUrl(this.apiUrl)
+            }
+        },
+        saveMergeTable(){
+            axios.get('/bi/user',{
+                params: {
+                    url
+                }
+            }).then((response)=>{
+                this.$router.push({ name: 'Analytics', query: { table_id: '123123' }})
             })
         }
     },
