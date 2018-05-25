@@ -205,8 +205,8 @@ export default {
     //       console.log(error);
     //     });
     setTimeout(()=>{
-      // this.orignDimensions = ['b'];
-      // this.orignMeasure = ['c','d'];
+      this.orignDimensions = ['b'];
+      this.orignMeasure = ['c','d'];
       this.loading = false;
     },1000)
   }

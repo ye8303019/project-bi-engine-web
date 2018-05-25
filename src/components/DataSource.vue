@@ -120,19 +120,22 @@ export default {
             })
         },
         // 添加Api地址
-        addApiUrl(url){
+        addApiUrl(){
+            if(!this.api.url||!this.api.name){
+                return 
+            }
             axios.post('/bi/api',{
                     url:this.api.url,
                     name:this.api.name
             }).then((response)=>{
                 this.getDataSourceList()
+                this.dialogFormVisible = false
             })
         },
         // 保存API数据
         saveDataSource(){
-            this.dialogFormVisible = false
-            if(this.dialogFormVisible=='first'){
-                this.addApiUrl(this.apiUrl)
+            if(this.activeName=='first'){
+                this.addApiUrl()
             }
         },
         saveMergeTable(){
