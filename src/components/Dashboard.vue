@@ -3,7 +3,7 @@
       <el-container class="app-overview-container">
         <el-header class="app-overview-container-header">仪表盘</el-header>
         <el-main class="app-overview-container-main" style="overflow: hidden">
-          <chart-demo v-for="chartData in chartDatas" :chart-type="dealData(chartData).chartType" :chart-prop="dealData(chartData).data" :show-type="'overView'"></chart-demo>
+          <chart-demo v-for="(chartData,index) in chartDatas" :chart-id="chartData.id" :table-id="chartData.collectionId" :key="index" :chart-type="dealData(chartData).chartType" :chart-prop="dealData(chartData).data" :show-type="'overView'"></chart-demo>
         </el-main>
       </el-container>
     </div>

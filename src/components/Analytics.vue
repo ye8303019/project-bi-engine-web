@@ -89,9 +89,10 @@
             <el-button style="position: absolute;right: 26px;bottom: 10px;" @click="updateChartData">更新</el-button>
           </el-header>
           <el-main style="height:calc(100% - 170px)">
-            <div v-if="chartData">
+            <div v-if="chartData" style="position:relative">
               <chart-demo :chart-type="chartType" :chart-prop="chartData" :show-type="'detail'"></chart-demo>
-              <el-button @click="saveChart">保存</el-button>
+              <el-button type="success" @click="saveChart" style="float:right">保存</el-button>
+              <span style="float:right; display:block;margin-right:20px; line-hight:42px;"><input type="checkbox" style="height: 15px;width: 15px;margin-right: 5px;">持续更新</span>
             </div>
           </el-main>
       </el-main>
@@ -146,6 +147,11 @@ export default {
     ChartTypeList,
     ChartDemo,
   },
+  computed:{
+    chartId(){
+      return this.$route.query.chart_id||''
+    }
+  },
   methods:{
     onEnd(d,e){
       let _index= e.oldIndx
@@ -166,9 +172,30 @@ export default {
     },
     saveChart() {
       axios.post('/bi/chart',
-        {"dataCollectId": this.dataCollectId, "dimensions": this.draggedRow, "measurements":this.draggedCol, "options": JSON.stringify(Object.assign(this.chartData, {chartType:this.chartType}))}
+        {
+            "id":this.chartId,
+            "dataCollectId": this.dataCollectId,
+            "dimensions": this.draggedRow,
+            "measurements":this.draggedCol,
+            "options": JSON.stringify(Object.assign(this.chartData, {chartType:this.chartType}))
+         }
       ).then((result)=>{
         this.$router.push({ name: 'Dashboard'})
+      })
+    },
+    getChartData(){
+      if(!this.chartId){
+          return
+      }
+      axios.get('/bi/chart/list').then((result)=>{
+        let _chartData = result.data.data.filter((item)=>{
+          return item.id==this.chartId
+        })[0];
+        this.chartData=_chartData
+        this.chartType=JSON.parse(_chartData.options).chartType
+        this.draggedRow=_chartData.dimesions
+        this.draggedCol=_chartData.measurements
+        console.log(JSON.parse(_chartData.options))
       })
     }
   },
@@ -183,6 +210,7 @@ export default {
       this.orignMeasure = data.measurements;
       this.loading = false;
     })
+    this.getChartData()
   }
 }
 </script>

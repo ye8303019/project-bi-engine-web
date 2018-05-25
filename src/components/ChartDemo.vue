@@ -1,5 +1,8 @@
 <template>
     <div class="chart-content" :class="{overview_chart:showType=='overView'}">
+        <p class="edit-btn">
+          <span @click="goToEdit(chartData)" >Edit</span>
+        </p>
         <ve-line :data="chartData" :settings="chartSettings" :colors="colors" v-if="chartType == '3'"></ve-line>
         <ve-histogram :data="chartData" :settings="chartSettings" :colors="colors" v-if="chartType == '6'"></ve-histogram>
         <!-- <ve-bar :data="chartData" :settings="chartSettings" height="100%" :colors="colors"></ve-bar> -->
@@ -21,6 +24,12 @@
           default: function () {
             return {}
           }
+        },
+        chartId:{
+          default:'1'
+        },
+        tableId:{
+          default:'15'
         }
       },
       watch: {
@@ -53,26 +62,12 @@
           }
       },
       created() {
-        // this.chartSettings = {
-        //   area: true,
-        //   metrics: ['销售额-1季度','销售额-2季度' ,'占比','其他'],
-        //   dimension: ['日期'],
-        //   showLine: ['占比'],
-        //   stack: { '单价': ['销售额-1季度', '销售额-2季度']},
-        // };
-        // this.chartData = {
-        //   columns: ['日期', '销售额-1季度', '销售额-2季度', '占比', '其他'],
-        //   rows: [
-        //     { '日期': '1月1日', '销售额-1季度': 1523, '销售额-2季度': 1523, '占比': 0.12, '其他': 100 },
-        //     { '日期': '1月2日', '销售额-1季度': 1223, '销售额-2季度': 1523, '占比': 0.345, '其他': 100 },
-        //     { '日期': '1月3日', '销售额-1季度': 2123, '销售额-2季度': 1523, '占比': 0.7, '其他': 100 },
-        //     { '日期': '1月4日', '销售额-1季度': 4123, '销售额-2季度': 1523, '占比': 0.31, '其他': 100 },
-        //     { '日期': '1月5日', '销售额-1季度': 3123, '销售额-2季度': 1523, '占比': 0.12, '其他': 100 },
-        //     { '日期': '1月6日', '销售额-1季度': 7123, '销售额-2季度': 1523, '占比': 0.65, '其他': 100 }
-        //   ]
-        // };
-
         dealForChart(this.showType, this.chartType, this.chartProp, this);
+      },
+      methods:{
+        goToEdit(){
+          this.$router.push({name: 'Analytics', query: { chart_id: this.chartId,table_id:this.tableId }})
+        }
       }
     }
 
@@ -113,6 +108,14 @@
     padding: 10px;
     margin: 10px;
     box-sizing: border-box;
+  }
+  .edit-btn{
+    text-align: right;
+    span{
+      font-size: 14px;
+      color: cornflowerblue;
+      cursor: pointer;
+    }
   }
 </style>
 
