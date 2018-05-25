@@ -48,6 +48,9 @@ export default {
   margin: 0;
   padding: 0;
 }
+.v-modal{
+    display: none !important ;
+}
 .app-container {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

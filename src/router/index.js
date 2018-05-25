@@ -7,8 +7,15 @@ import DataSource from '@/components/DataSource'
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
+      path: '/',
+      name: 'index',
+      redirect: {
+        name: 'DataSource'
+      }
+      }, {
       path: '/DataSource',
       name: 'DataSource',
       component: DataSource
