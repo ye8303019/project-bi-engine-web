@@ -103,7 +103,6 @@ export default {
         // 文件上传
         submitUpload() {
             this.$refs.upload.submit();
-            this.getDataSourceList();
         },
         // 获取DataSourceList 数据
         getDataSourceList(){
@@ -138,6 +137,7 @@ export default {
             if(this.activeName=='first'){
                 this.addApiUrl()
             }else{
+                this.getDataSourceList();
                 this.dialogFormVisible = false
             }
         },
