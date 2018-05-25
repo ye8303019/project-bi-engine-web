@@ -4,10 +4,13 @@
       <el-aside width="250px" style="margin:10px;">
         <el-card class="box-card" style="height:100%; overflow:hide">
           <div slot="header" class="clearfix card-header">
-            <span>我的数据</span>
+            <span>我的数据源</span>
           </div>
           <div class="text data-list">
-              <p v-for="(item, index) in dataSourceList" :key="index">{{item.name+'_'+item.id}}</p>
+              <div v-for="(item, index) in dataSourceList" :key="index">
+                  <span>{{item.name}}</span>
+                  <p class="sub-table" v-for="(tableItem ,idx) in item.tables" :key="idx" >{{tableItem.name}}</p>
+              </div>
           </div>
           <div class="data-list-footer">
               <el-button type="success" @click="dialogFormVisible = true">添加数据源</el-button>
@@ -20,13 +23,13 @@
                 <p style="text-align:left; margin-bottom:10px;">
                     <span> 数据处理SQL：</span>
                 </p>
-                <textarea name="sqlContent" class="sql-content"></textarea>
+                <textarea name="sqlContent" class="sql-content" v-model="dataSql"></textarea>
             </el-row>
           </el-header>
           <el-main style="height:calc(100% - 250px)">
             <table-list :table-data="tableData"></table-list>
-            <el-button class="data-merge-button">合并数据</el-button>
-            <el-button type="success" class="data-save-button">保存去分析</el-button>
+            <el-button class="data-merge-button" @click="getSourceData(dataSql)">合并数据</el-button>
+            <el-button type="success" class="data-save-button" @click="saveMergeTable">保存去分析</el-button>
           </el-main>
       </el-main>
     </el-container>
@@ -35,7 +38,7 @@
             <el-tab-pane label="API" name="first">
                 <el-form :model="form">
                     <el-form-item label="API地址：" :label-width="formLabelWidth">
-                        <el-input v-model="form.name" auto-complete="off"></el-input>
+                        <el-input v-model="apiUrl" auto-complete="off"></el-input>
                     </el-form-item>
                 </el-form>
             </el-tab-pane>
@@ -45,7 +48,7 @@
                         <el-upload
                             class="upload-demo"
                             ref="upload"
-                            action="https://jsonplaceholder.typicode.com/posts/"
+                            action="/bi/file"
                             :file-list="fileList"
                             :auto-upload="false">
                                 <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
@@ -58,7 +61,7 @@
         </el-tabs>
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+            <el-button type="primary" @click="saveDataSource">确 定</el-button>
         </div>
     </el-dialog>
   </div>
@@ -81,100 +84,67 @@ export default {
         formLabelWidth:'100px',
         activeName:'second',
         fileList: [],
-        dataSourceList:[{
-                name:'专利价值',
-                id:'123'
-            },{
-                name:'专利诉讼',
-                id:'124'
-            },{
-                name:'专利概况',
-                id:'125'
-        } ],
-        tableData: [{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
-                },{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
-                },{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
-                },{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
-                }]
+        dataSourceList:[],
+        dataSql:'',
+        apiUrl:'',
+        tableData: []
     }
   },
   components:{
       TableList
   },
-  methods:{
-      submitUpload() {
-        this.$refs.upload.submit();
-      },
-  },
   mounted(){
-    axios.get('/api/user?ID=12345')
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-  }
+      this.getDataSourceList()
+  },
+    methods:{
+        // 文件上传
+        submitUpload() {
+            this.$refs.upload.submit();
+        },
+        // 获取DataSourceList 数据
+        getDataSourceList(){
+            axios.get('/bi/data/source').then((response)=>{
+                this.dataSourceList=response.data.data;
+            })
+        },
+        // 获取合并后table数据
+        getSourceData(sql){
+            if(!sql) return;
+            axios.post('/bi/data/collection/query',{
+                    query:sql
+            }).then((response)=>{
+                this.tableData=response.data.data;
+            })
+        },
+        // 添加Api地址
+        addApiUrl(url){
+            axios.get('/bi/user',{
+                params: {
+                    url
+                }
+            }).then((response)=>{
+                this.dataSourceList=response;
+                this.getDataSourceList()
+            })
+        },
+        // 保存API数据
+        saveDataSource(){
+            this.dialogFormVisible = false
+            if(this.dialogFormVisible=='first'){
+                this.addApiUrl(this.apiUrl)
+            }
+        },
+        saveMergeTable(){
+            axios.post('/bi/data/collection/',{
+                query:this.dataSql,
+                name:"hhhhhhaaaaaaa",
+                tableList:["1","3"]
+            }).then((response)=>{
+                let _id = response.data.data.id
+                this.$router.push({ name: 'Analytics', query: { table_id: _id }})
+            })
+        }
+    },
 }
 </script>
 
@@ -198,8 +168,21 @@ export default {
 .data-list{
     text-align: left;
     font-size: 14px;
+    background-color: #fefefe;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    span{
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+        line-height: 24px;
+    }
     p{
-        margin-bottom: 10px;
+        padding-left: 10px;
+        color: #666;
+        line-height: 22px;
+        font-size: 14px;
     }
 }
 .box-card{

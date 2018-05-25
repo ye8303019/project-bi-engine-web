@@ -5,11 +5,12 @@
       @select="handleSelect"
       class="el-menu-demo"
       mode="horizontal"
-      background-color="#545c64"
-      text-color="#fff"
+      background-color="#fff"
+      text-color="#333"
       font-sixe="16px"
       :router="true"
-      active-text-color="#ffd04b">
+      active-text-color="#75bb00">
+           <img class="logo-img" width="160" src="./assets/logo.svg" />
           <el-menu-item  style="float:right" index="Dashboard">仪表盘</el-menu-item>
           <el-menu-item  style="float:right" index="Analytics">数据分析</el-menu-item>
           <el-menu-item  style="float:right" index="DataSource">数据源</el-menu-item>
@@ -71,5 +72,7 @@ export default {
 a{
   text-decoration: none;
 }
-
+.logo-img{
+  margin: 15px 0 0 30px;
+}
 </style>

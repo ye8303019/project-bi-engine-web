@@ -5,16 +5,10 @@
             stripe
             style="width: 100%">
                 <el-table-column
-                    prop="date"
-                    label="日期">
-                </el-table-column>
-                <el-table-column
-                    prop="name"
-                    label="姓名">
-                </el-table-column>
-                <el-table-column
-                    prop="address"
-                    label="地址">
+                    v-for="(item, index) in tableKey "
+                    :key="index"
+                    :prop="item"
+                    :label="item">
                 </el-table-column>
         </el-table>
     </div>
@@ -34,6 +28,15 @@
         mounted(){
 
         },
+        computed:{
+            tableKey(){
+                let _tableKey=[]
+                for(var key in this.tableData[0]){
+                    _tableKey.push(key)
+                }
+                return _tableKey
+            }
+        }
     }
 </script>
 <style lang="less">
