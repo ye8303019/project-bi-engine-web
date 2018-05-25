@@ -165,6 +165,8 @@ export default {
       }).then((result)=>{
         let data = result.data.data;
         this.chartData = data;
+      }).catch((err)=>{
+        this.openError()
       })
     },
     updateChartType(chartType){
@@ -181,6 +183,8 @@ export default {
          }
       ).then((result)=>{
         this.$router.push({ name: 'Dashboard'})
+      }).catch((err)=>{
+        this.openError()
       })
     },
     getChartData(){
@@ -196,8 +200,18 @@ export default {
         this.draggedRow=_chartData.dimesions
         this.draggedCol=_chartData.measurements
         console.log(JSON.parse(_chartData.options))
+      }).catch((err)=>{
+        this.openError()
       })
-    }
+    },
+    openError() {
+        const h = this.$createElement;
+
+        this.$notify({
+          title: '错误提示',
+          message: h('i', { style: 'color: teal'}, '网络超时，请稍后重试')
+        });
+      },
   },
   created() {
     this.loading = true;
@@ -209,7 +223,9 @@ export default {
       this.orignDimensions = data.dimensions;
       this.orignMeasure = data.measurements;
       this.loading = false;
-    })
+    }).catch((err)=>{
+        this.openError()
+      })
     this.getChartData()
   }
 }

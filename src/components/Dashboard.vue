@@ -21,6 +21,8 @@
       axios.get('/bi/chart/list').then((result)=>{
         let data = result.data.data;
         this.chartDatas = data;
+      }).catch((err)=>{
+        this.openError()
       })
     },
     data() {
@@ -35,7 +37,15 @@
           data: opts,
           chartType: opts.chartType
         }
-      }
+      },
+      openError() {
+        const h = this.$createElement;
+
+        this.$notify({
+          title: '错误提示',
+          message: h('i', { style: 'color: teal'}, '网络超时，请稍后重试')
+        });
+      },
     }
   }
 </script>

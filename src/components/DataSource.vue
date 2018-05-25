@@ -108,6 +108,8 @@ export default {
         getDataSourceList(){
             axios.get('/bi/data/source').then((response)=>{
                 this.dataSourceList=response.data.data;
+            }).catch((err)=>{
+                this.openError()
             })
         },
         // 获取合并后table数据
@@ -117,6 +119,8 @@ export default {
                     query:sql
             }).then((response)=>{
                 this.tableData=response.data.data;
+            }).catch((err)=>{
+                this.openError()
             })
         },
         // 添加Api地址
@@ -130,6 +134,8 @@ export default {
             }).then((response)=>{
                 this.getDataSourceList()
                 this.dialogFormVisible = false
+            }).catch((err)=>{
+                this.openError()
             })
         },
         // 保存API数据
@@ -149,8 +155,18 @@ export default {
             }).then((response)=>{
                 let _id = response.data.data.id
                 this.$router.push({ name: 'Analytics', query: { table_id: _id }})
+            }).catch((err)=>{
+                this.openError()
             })
-        }
+        },
+        openError() {
+        const h = this.$createElement;
+
+        this.$notify({
+          title: '错误提示',
+          message: h('i', { style: 'color: teal'}, '网络超时，请稍后重试')
+        });
+      },
     },
 }
 </script>
