@@ -7,7 +7,10 @@
             <span>我的数据源</span>
           </div>
           <div class="text data-list">
-              <p v-for="(item, index) in dataSourceList" :key="index">{{item.name+'_'+item.id}}</p>
+              <div v-for="(item, index) in dataSourceList" :key="index">
+                  <span>{{item.name}}</span>
+                  <p class="sub-table" v-for="(tableItem ,idx) in item.tables" :key="idx" >{{tableItem.name}}</p>
+              </div>
           </div>
           <div class="data-list-footer">
               <el-button type="success" @click="dialogFormVisible = true">添加数据源</el-button>
@@ -25,7 +28,7 @@
           </el-header>
           <el-main style="height:calc(100% - 250px)">
             <table-list :table-data="tableData"></table-list>
-            <el-button class="data-merge-button" @click="getSourceData('',dataSql)">合并数据</el-button>
+            <el-button class="data-merge-button" @click="getSourceData(dataSql)">合并数据</el-button>
             <el-button type="success" class="data-save-button" @click="saveMergeTable">保存去分析</el-button>
           </el-main>
       </el-main>
@@ -81,22 +84,10 @@ export default {
         formLabelWidth:'100px',
         activeName:'second',
         fileList: [],
-        dataSourceList:[{
-                name:'专利价值',
-                id:'123'
-        }],
+        dataSourceList:[],
         dataSql:'',
         apiUrl:'',
-        tableData: [{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄',
-                    time:'123'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                }]
+        tableData: []
     }
   },
   components:{
@@ -112,23 +103,17 @@ export default {
         },
         // 获取DataSourceList 数据
         getDataSourceList(){
-            axios.get('/bi/user', {
-                params: {
-                    ID: 12345
-                }
-            }).then((response)=>{
-                this.dataSourceList=response;
+            axios.get('/bi/data/source').then((response)=>{
+                this.dataSourceList=response.data.data;
             })
         },
         // 获取合并后table数据
-        getSourceData(id,sql){
-            axios.get('/bi/user',{
-                params: {
-                    ID: 12345,
-                    sql
-                }
+        getSourceData(sql){
+            if(!sql) return;
+            axios.post('/bi/data/collection/query',{
+                    query:sql
             }).then((response)=>{
-                this.dataSourceList=response;
+                this.tableData=response.data.data;
             })
         },
         // 添加Api地址
@@ -150,12 +135,13 @@ export default {
             }
         },
         saveMergeTable(){
-            axios.get('/bi/user',{
-                params: {
-                    url
-                }
+            axios.post('/bi/data/collection/',{
+                query:this.dataSql,
+                name:"hhhhhhaaaaaaa",
+                tableList:["1","3"]
             }).then((response)=>{
-                this.$router.push({ name: 'Analytics', query: { table_id: '123123' }})
+                let _id = response.data.data.id
+                this.$router.push({ name: 'Analytics', query: { table_id: _id }})
             })
         }
     },
@@ -182,8 +168,21 @@ export default {
 .data-list{
     text-align: left;
     font-size: 14px;
+    background-color: #fefefe;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    span{
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+        line-height: 24px;
+    }
     p{
-        margin-bottom: 10px;
+        padding-left: 10px;
+        color: #666;
+        line-height: 22px;
+        font-size: 14px;
     }
 }
 .box-card{
