@@ -28,7 +28,7 @@
           </el-header>
           <el-main style="height:calc(100% - 250px)">
             <table-list :table-data="tableData"></table-list>
-            <el-button class="data-merge-button" @click="getSourceData(dataSql)">合并数据</el-button>
+            <el-button class="data-merge-button" @click="getSourceData(dataSql)">查询数据</el-button>
             <el-button type="success" class="data-save-button" @click="saveMergeTable">保存去分析</el-button>
           </el-main>
       </el-main>
@@ -36,14 +36,17 @@
     <el-dialog title="添加数据源" :visible.sync="dialogFormVisible">
         <el-tabs v-model="activeName">
             <el-tab-pane label="API" name="first">
-                <el-form :model="form">
+                <el-form>
+                    <el-form-item label="API名称：" :label-width="formLabelWidth">
+                        <el-input v-model="api.name" auto-complete="off"></el-input>
+                    </el-form-item>
                     <el-form-item label="API地址：" :label-width="formLabelWidth">
-                        <el-input v-model="apiUrl" auto-complete="off"></el-input>
+                        <el-input v-model="api.url" auto-complete="off"></el-input>
                     </el-form-item>
                 </el-form>
             </el-tab-pane>
             <el-tab-pane label="EXCEL" name="second">
-                <el-form :model="form">
+                <el-form>
                     <el-form-item label="EXCEL文件：" :label-width="formLabelWidth">
                         <el-upload
                             class="upload-demo"
@@ -78,15 +81,15 @@ export default {
   data(){
     return {
         dialogFormVisible:false,
-        form:{
-            name:''
-        },
         formLabelWidth:'100px',
         activeName:'second',
         fileList: [],
         dataSourceList:[],
         dataSql:'',
-        apiUrl:'',
+        api:{
+            name:'',
+            url:''
+        },
         tableData: []
     }
   },
@@ -118,12 +121,10 @@ export default {
         },
         // 添加Api地址
         addApiUrl(url){
-            axios.get('/bi/user',{
-                params: {
-                    url
-                }
+            axios.post('/bi/api',{
+                    url:this.api.url,
+                    name:this.api.name
             }).then((response)=>{
-                this.dataSourceList=response;
                 this.getDataSourceList()
             })
         },
@@ -137,7 +138,7 @@ export default {
         saveMergeTable(){
             axios.post('/bi/data/collection/',{
                 query:this.dataSql,
-                name:"hhhhhhaaaaaaa",
+                name:"",
                 tableList:["1","3"]
             }).then((response)=>{
                 let _id = response.data.data.id
