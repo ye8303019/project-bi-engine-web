@@ -21,11 +21,22 @@
       data(){
           return {
               chartTypeList:[
+                {
+                  src:require("../assets/1.svg"),
+                  type:"table",
+                  index: '0'
+                },
+                {
+                  src:require("../assets/7.svg"),
+                  type:"table",
+                  index: '6'
+                },
+                {
+                  src:require("../assets/4.svg"),
+                  type:"table",
+                  index: '3'
+                },
                   {
-                      src:require("../assets/1.svg"),
-                      type:"table",
-                      index: '0'
-                  },{
                       src:require("../assets/2.svg"),
                       type:"table",
                       index: '1'
@@ -34,10 +45,6 @@
                       type:"table",
                       index: '2'
                   },{
-                      src:require("../assets/4.svg"),
-                      type:"table",
-                      index: '3'
-                  },{
                       src:require("../assets/5.svg"),
                       type:"table",
                       index: '4'
@@ -45,10 +52,6 @@
                       src:require("../assets/6.svg"),
                       type:"table",
                       index: '5'
-                  },{
-                      src:require("../assets/7.svg"),
-                      type:"table",
-                      index: '6'
                   },{
                       src:require("../assets/8.svg"),
                       type:"table",
@@ -82,7 +85,9 @@
       },
       methods:{
           updateChartType(data){
-              this.$emit('update-chart-type',data.index)
+              if (data.index == '6' || data.index == '3') {
+                this.$emit('update-chart-type',data.index)
+              }
           }
       }
     }
