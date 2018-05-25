@@ -11,7 +11,10 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      "/api/*": "http://localhost:3000"
+      '/bi': {
+        target: 'http://172.20.10.3:8080', // 接口的域名
+        changeOrigin: true, // 如果接口跨域，需要进行这个参数配置
+      }
     },
 
     // Various Dev Server settings

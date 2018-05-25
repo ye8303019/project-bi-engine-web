@@ -45,7 +45,7 @@
                         <el-upload
                             class="upload-demo"
                             ref="upload"
-                            action="https://jsonplaceholder.typicode.com/posts/"
+                            action="/bi/file"
                             :file-list="fileList"
                             :auto-upload="false">
                                 <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
@@ -84,97 +84,37 @@ export default {
         dataSourceList:[{
                 name:'专利价值',
                 id:'123'
-            },{
-                name:'专利诉讼',
-                id:'124'
-            },{
-                name:'专利概况',
-                id:'125'
-        } ],
+        }],
         tableData: [{
                     date: '2016-05-02',
                     name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
+                    address: '上海市普陀区金沙江路 1518 弄',
+                    time:'123'
                 }, {
                     date: '2016-05-04',
                     name: '王小虎',
                     address: '上海市普陀区金沙江路 1517 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
-                },{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
-                },{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
-                },{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
                 }]
     }
   },
   components:{
       TableList
   },
-  methods:{
-      submitUpload() {
-        this.$refs.upload.submit();
-      },
-  },
   mounted(){
-    axios.get('/api/user?ID=12345')
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-  }
+      getDataSourceList()
+  },
+    methods:{
+        // 文件上传
+        submitUpload() {
+            this.$refs.upload.submit();
+        },
+        // 获取DataSourceList 数据
+        getDataSourceList(){
+            axios.get('/api/user?ID=12345').then((response)=>{
+                this.dataSourceList=response;
+            })
+        }
+    },
 }
 </script>
 
