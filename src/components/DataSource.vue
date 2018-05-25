@@ -37,8 +37,11 @@
         <el-tabs v-model="activeName">
             <el-tab-pane label="API" name="first">
                 <el-form>
+                    <el-form-item label="API名称：" :label-width="formLabelWidth">
+                        <el-input v-model="api.name" auto-complete="off"></el-input>
+                    </el-form-item>
                     <el-form-item label="API地址：" :label-width="formLabelWidth">
-                        <el-input v-model="apiUrl" auto-complete="off"></el-input>
+                        <el-input v-model="api.url" auto-complete="off"></el-input>
                     </el-form-item>
                 </el-form>
             </el-tab-pane>
@@ -83,7 +86,10 @@ export default {
         fileList: [],
         dataSourceList:[],
         dataSql:'',
-        apiUrl:'',
+        api:{
+            name:'',
+            url:''
+        },
         tableData: []
     }
   },
@@ -115,12 +121,10 @@ export default {
         },
         // 添加Api地址
         addApiUrl(url){
-            axios.get('/bi/user',{
-                params: {
-                    url
-                }
+            axios.post('/bi/api',{
+                    url:this.api.url,
+                    name:this.api.name
             }).then((response)=>{
-                this.dataSourceList=response;
                 this.getDataSourceList()
             })
         },
@@ -134,7 +138,7 @@ export default {
         saveMergeTable(){
             axios.post('/bi/data/collection/',{
                 query:this.dataSql,
-                name:"hhhhhhaaaaaaa",
+                name:"",
                 tableList:["1","3"]
             }).then((response)=>{
                 let _id = response.data.data.id
